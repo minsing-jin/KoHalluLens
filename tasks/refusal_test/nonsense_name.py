@@ -7,10 +7,10 @@
 
 from tqdm.contrib.concurrent import thread_map
 from utils import exp, lm, eval_utils
-import tasks.refusal_test.prompt as prompt_templates
 import os
 import json
 import pandas as pd
+import re
 
 def remove_file(file_path):
     if os.path.exists(file_path):
@@ -33,6 +33,10 @@ class NonsenseNameInference:
         TASKNAME = self.TASKNAME
         # prompt_path = f"{self.root_path}/save/{self.seed}_{self.BUSINESS_N}_{self.EVENT_N}_{self.PRODUCT_N}_all_not_exist.csv"
         all_prompts = pd.read_csv(self.prompt_path)
+
+        # TODO: This assert is to check if generated prompts are Korean.
+        assert all(any(re.search('[가-힣]', str(value)) for value in row) for _, row in all_prompts.iterrows()), "This prompt file does not seem to be Korean."
+
         exp.run_exp(task=TASKNAME, 
                     model_path=generate_model, 
                     all_prompts=all_prompts, 
@@ -49,7 +53,7 @@ class NonsenseNameInference:
         remove_file(results_file_path)
 
 class NonsenseNameEval:
-    def __init__(self, output_base_dir, model_path, prompt_path):
+    def __init__(self, output_base_dir, model_path, prompt_path, language='kor'):
         self.prompt_path = prompt_path
         self.TASKNAME = prompt_path.split('/')[-1].replace('_all_not_exist.csv', '') #  f"{seed}_{BUSINESS_N}_{EVENT_N}_{PRODUCT_N}"
         print('EVAL TASKNAME', self.TASKNAME)
@@ -60,9 +64,17 @@ class NonsenseNameEval:
         self.eval_raw_path = f'{self.task_output_dir}/raw_eval_res.jsonl'
         self.evaluator = "meta-llama/Llama-3.1-70B-Instruct"
 
+        if language == 'kor':
+            import tasks.refusal_test.ko_prompt as prompt_templates
+        elif language == 'eng':
+            import tasks.refusal_test.prompt as prompt_templates
+        else:
+            raise ValueError("language should be 'kor' or 'eng'")
+        self.prompt_templates = prompt_templates
+
     def automatic_abstention(self, generations, evaluator_model="meta-llama/Meta-Llama-3.1-70B-Instruct"):
         abstain_prompts = [
-                prompt_templates.ABSTAIN_PROMPT_PLACE_NONSENSE.format(
+                self.prompt_templates.ABSTAIN_PROMPT_PLACE_NONSENSE.format(
                     name=generation['name'], 
                     TYPE=generation['type_'],
                     PLACE=" in " + generation['place'] if generation['place'] else "",

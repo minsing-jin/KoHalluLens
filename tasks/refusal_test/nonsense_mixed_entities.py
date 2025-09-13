@@ -13,11 +13,13 @@ from utils import lm, eval_utils
 
 from tasks.refusal_test.nonsense_name import NonsenseNameInference, NonsenseNameEval
 from tasks.refusal_test.entities_generation import NonsenseMixedGeneration
-import tasks.refusal_test.prompt as prompt_templates
 
 
 class NonsenseMixedInference(NonsenseNameInference):
     def __init__(self, taskname, output_base_dir, generate_model, prompt_path, seed, method='vllm'):
+        # TODO: I added this super init, check if it works
+        super().__init__(output_base_dir, generate_model, prompt_path, seed, method)
+
         self.output_base_dir = output_base_dir
         self.generate_model = generate_model
         self.inference_method = method
@@ -27,7 +29,9 @@ class NonsenseMixedInference(NonsenseNameInference):
         print('INFER TASKNAME', self.TASKNAME)
 
 class NonsenseMixedEval(NonsenseNameEval):
-    def __init__(self, taskname, output_base_dir, model_path, prompt_path, med_safety_filtered_model=False):
+    def __init__(self, taskname, output_base_dir, model_path, prompt_path, med_safety_filtered_model=False, language='kor'):
+        # TODO: I added this super init, check if it works
+        super().__init__(output_base_dir, model_path, prompt_path)
 
         self.prompt_path = prompt_path
         self.TASKNAME = taskname #prompt_path.split('/')[-1].replace('.csv', '') #  f"{seed}_{N}.csv"
@@ -43,14 +47,22 @@ class NonsenseMixedEval(NonsenseNameEval):
 
         print('EVAL TASKNAME', self.TASKNAME)
 
+        if language == 'kor':
+            import tasks.refusal_test.ko_prompt as prompt_templates
+        elif language == 'eng':
+            import tasks.refusal_test.prompt as prompt_templates
+        else:
+            raise NotImplementedError
+        self.prompt_templates = prompt_templates
+
     def automatic_abstention(self, generations, evaluator_model="meta-llama/Llama-3.1-8B-Instruct"):
         JSON_KEY = "does_believe"
 
         eval_prompts = {
-            'medicine' : prompt_templates.ABSTAIN_PROMPT_NONSENSE_MEDICINE,
-            'animal' : prompt_templates.ABSTAIN_PROMPT_ANIMAL_NONSENSE,
-            'plant' : prompt_templates.ABSTAIN_PROMPT_ANIMAL_NONSENSE,
-            'bacteria' : prompt_templates.ABSTAIN_PROMPT_ANIMAL_NONSENSE,
+            'medicine' : self.prompt_templates.ABSTAIN_PROMPT_NONSENSE_MEDICINE,
+            'animal' : self.prompt_templates.ABSTAIN_PROMPT_ANIMAL_NONSENSE,
+            'plant' : self.prompt_templates.ABSTAIN_PROMPT_ANIMAL_NONSENSE,
+            'bacteria' : self.prompt_templates.ABSTAIN_PROMPT_ANIMAL_NONSENSE,
         }
 
         abstain_prompts = [
