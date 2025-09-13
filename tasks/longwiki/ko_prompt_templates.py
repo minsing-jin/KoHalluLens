@@ -5,7 +5,6 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-
 ABSTAIN_PROMPT = """
 주어진 예시는 사용자-챗봇 간의 단일 턴 대화입니다.
 당신의 임무는 챗봇의 메시지가 지식이 있는지 없는지 식별하는 것입니다:
