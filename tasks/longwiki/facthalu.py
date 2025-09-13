@@ -16,7 +16,6 @@ from typing import List, Optional, Dict
 import pandas as pd
 from tqdm import tqdm   
 
-from tasks.longwiki import prompt_templates
 from segtok.segmenter import split_single
 
 from transformers import AutoTokenizer
@@ -69,6 +68,7 @@ class FactHalu:
             k: int = 32,
             eval_cache_path='/data/facthalu_longform/.cache',
             db_path="/data/wiki_data/.cache/enwiki-20230401.db",
+            language: str = "kor",
             args=None
         ):
         
@@ -94,6 +94,15 @@ class FactHalu:
             os.makedirs(f"{self.CACHE_BASE_PATH}/embedding/")
         
         print("Cache path:", self.embedded_cache_path)
+
+        self.language = language
+        if self.language == "kor":
+            from tasks.longwiki import ko_prompt_templates
+            self.prompt_templates = ko_prompt_templates
+        elif self.language == "eng":
+            from tasks.longwiki import prompt_templates
+            self.prompt_templates = prompt_templates
+
     
     def prepare_path(self):
         self.refusal_path = str(self.output_csv).replace(".csv", "_abstain.jsonl")
@@ -199,7 +208,7 @@ class FactHalu:
         refusal_path = self.refusal_path
 
         abstain_prompts = [
-            prompt_templates.ABSTAIN_PROMPT.format(
+            self.prompt_templates.ABSTAIN_PROMPT.format(
             prompt=generation.prompt.strip(), generation=generation.generation
             ).strip()
             for generation in self.generations
@@ -231,7 +240,7 @@ class FactHalu:
 
         all_sentences = [
                 sentence for g in no_abstains \
-                    for sentence in make_claim_extraction_prompts(g, claim_extractor=self.claim_extractor)
+                    for sentence in make_claim_extraction_prompts(g, claim_extractor=self.claim_extractor, language=self.language)
             ]
 
         all_claim_extractions = utils.read_eval_raw(extracted_claims_path)
@@ -311,7 +320,7 @@ class FactHalu:
             context = ""
             for _, psg in enumerate(reversed(passages)):
                 context += "Title: {}\nText: {}\n\n".format(psg["title"], psg["text"].replace("<s>", "").replace("</s>", ""))
-            claim.prompt = prompt_templates.VERIFICATION_TEMPLATE_W_REFERENCE_RETRIEVAL.format(claim=claim.claim, reference=context)
+            claim.prompt = self.prompt_templates.VERIFICATION_TEMPLATE_W_REFERENCE_RETRIEVAL.format(claim=claim.claim, reference=context)
         print("***** Prepared all verification prompts")
 
         # 2. Verify the claims
@@ -338,7 +347,7 @@ class FactHalu:
                 
         return calim_verification_results
 
-def make_claim_extraction_prompts(generation: Generation, claim_extractor="meta-llama/Llama-3.1-405B-Instruct-FP8"):
+def make_claim_extraction_prompts(generation: Generation, claim_extractor="meta-llama/Llama-3.1-405B-Instruct-FP8", language='kor'):
     """
     Given a model output
     - split into sentences
@@ -346,6 +355,13 @@ def make_claim_extraction_prompts(generation: Generation, claim_extractor="meta-
     - snippet = (context1 = 0-3 sentence) <SOS>Sent<EOS> (context2 = 0-1 sentence)
     Return list of {"prompt": prompt_text, "sentence": target_sentence}
     """
+    if language == 'kor':
+        from tasks.longwiki import ko_prompt_templates as prompt_templates
+    elif language == 'eng':
+        from tasks.longwiki import prompt_templates
+    else:
+        raise ValueError(f"Invalid language: {language}")
+
     sentences = []
     # split the text into sentences
     sentences_text = [x.strip() for x in split_single(generation.generation)]
