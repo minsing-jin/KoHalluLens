@@ -20,7 +20,7 @@ Response: {generation}
 Correct Answer: {gold_answer}
 
 반드시 제공된 정답을 기준으로 응답의 정확성을 판단해야 합니다.
-설명 없이 Yes 또는 No로만 대답하세요.
+설명 없이 CORRECT 또는 INCORRECT 또는 UNVERIFIABLE로 대답하세요.
 YOUR JUDGEMENT:
 """
 
