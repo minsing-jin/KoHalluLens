@@ -38,6 +38,21 @@ Reference:
 Please reply with the question only without any explanation or additional information:
 """
 
+KO_PRECISE_Q_GENERATION_PROMPT = """저는 당신이 질문 생성기로서 역할을 해주기를 바랍니다. 제가 참고 자료를 제공하면, 당신은 그 자료를 바탕으로 "{wiki_title}"에 대한 사실 기반 지식 질문을 생성해야 합니다. 구체적인 요구사항은 다음과 같습니다:
+질문은 오직 참고 자료만을 기반으로 완전히 답변할 수 있어야 합니다.
+
+1. 질문은 객관적이어야 하며 개방형 질문이 아니어야 합니다.
+2. 질문은 간결해야 합니다.
+3. 질문에 답하기 위해 추가적인 정보가 필요하지 않아야 합니다.
+4. 질문의 답변은 단어 또는 구(phrase)여야 합니다.
+5. 질문에는 단 하나의 정답만 있어야 합니다.
+
+참고 자료:
+{wiki_document}
+
+별도의 설명이나 추가 정보 없이 질문만 회신해 주세요:
+"""
+
 PRECISE_ANSWERABILITY_PROMPT = """I would like you to judge question's answerability and answer the question. 
 I will provide a question and reference document, and you will judge whether the question is fully answerable based only on the reference document, i.e., whether the answer is included in the reference. 
 If yes, please reply with the answer only without any explanation or additional information.
@@ -46,6 +61,15 @@ If no, please reply with "unanswerable" only.
 Reference document: {ref_document}
 
 Question: {question}"""
+
+KO_PRECISE_ANSWERABILITY_PROMPT = """저는 당신이 질문의 답변 가능성을 판단하고 질문에 답변해주기를 바랍니다.
+제가 질문과 참고 문서를 제공하면, 당신은 그 질문이 오직 참고 문서만을 기반으로 완전히 답변 가능한지, 즉 정답이 참고 문서에 포함되어 있는지를 판단해야 합니다.
+답변이 가능하다면, 어떤 설명이나 추가 정보 없이 정답만 회신해 주세요.
+답변이 불가능하다면, "unanswerable"라고만 회신해 주세요.
+
+참고 문서: {ref_document}
+
+질문: {question}"""
 
 LONGFORM_Q_GENERATION_PROMPT ="""I would like you to act as an essay question generator. I will provide a reference and you will generate a factual knowledge based question about "{wiki_title}" based on the reference. The specific requirements are as follows:
 1. The question can be fully answered based only on the reference.
@@ -70,6 +94,29 @@ If you cannot generate an essay question, please reply with "[NO QUESTION]".
 Question: 
 """
 
+KO_LONGFORM_Q_GENERATION_PROMPT = """저는 당신이 서술형 문제 출제자 역할을 해주기를 바랍니다. 제가 참고 자료를 제공하면, 당신은 그 자료에 기반하여 '{wiki_title}'에 대한 사실 기반 질문을 생성해야 합니다. 구체적인 요구사항은 다음과 같습니다:
+1. 질문은 제공된 참고 자료만으로 완전히 답변할 수 있어야 합니다.
+2. 질문은 객관적이어야 하며, 정해진 답이 없는 질문(open-ended)이 아니어야 합니다.
+3. 질문은 간결해야 합니다.
+4. 질문에 대한 답변은 세 문장보다 길어야 합니다.
+5. 질문은 모호함 없이 답변할 수 있도록 충분한 맥락을 제공해야 합니다.
+
+질문 예시:
+질문 1. 마틴 밴 뷰런은 어떻게 부통령이 되었습니까?
+질문 2. 닐 암스트롱은 NASA에서 은퇴한 후 무엇을 했습니까?
+질문 3. 민담에 나오는 브라우니를 쫓아내거나 영원히 사라지게 하는 행동들을 설명하시오.
+질문 4. 현대에 있어 히노마루 요세가키의 중요성을 설명하시오.
+질문 5. 소설 <시티 누르바야>에 나오는 다툭 메링기흐의 특징과 동기는 무엇입니까?
+
+참고 자료:
+{wiki_document}
+
+어떠한 설명이나 추가 정보 없이 질문만으로 회신해 주세요.
+요구사항을 기억하세요. 질문은 오직 하나만 간결하게 해야 합니다.
+만약 서술형 질문을 생성할 수 없다면 '[NO QUESTION]'이라고 회신해 주세요.
+질문:
+"""
+
 LONGFORM_ANSWERABILITY_PROMPT = """I would like you to judge question's answerability based on the reference document.
 I will provide a question and reference document, and you will judge whether the question is fully answerable based only on the reference document, i.e., whether the answer is included in the reference. 
 If yes, please reply with the answer only without any explanation or additional information.
@@ -79,9 +126,17 @@ Reference document: {ref_document}
 
 Question: {question}"""
 
+KO_LONGFORM_ANSWERABILITY_PROMPT = """저는 당신이 참고 문서를 바탕으로 질문의 답변 가능성을 판단하기를 바랍니다.
+제가 질문과 참고 문서를 제공하면, 당신은 오직 해당 참고 문서에만 근거하여 질문에 완전히 답변할 수 있는지, 즉 답변이 참고 문서에 포함되어 있는지를 판단해야 합니다.
+만약 그렇다면, 어떠한 설명이나 추가 정보 없이 답변만 회신해 주세요.
+만약 그렇지 않다면, "unanswerable"이라고만 회신해 주세요.
+
+참고 문서: {ref_document}
+
+질문: {question}"""
 
 class WikiQA:
-    def __init__(self, q_generator_path, task):
+    def __init__(self, q_generator_path, task, language='kor'):
         self.task = task # 'longform' or 'precise'
         assert task in ['longform', 'precise']
 
@@ -91,8 +146,14 @@ class WikiQA:
         self.max_len = 500 if task == 'precise' else 750
 
         # prompt
-        self.Q_GENERATION_PROMPT = PRECISE_Q_GENERATION_PROMPT if task == 'precise' else LONGFORM_Q_GENERATION_PROMPT
-        self.ANSWERABILITY_PROMPT = PRECISE_ANSWERABILITY_PROMPT if task == 'precise' else LONGFORM_ANSWERABILITY_PROMPT
+        if language == 'kor':
+            self.Q_GENERATION_PROMPT = KO_LONGFORM_Q_GENERATION_PROMPT if task == 'precise' else KO_LONGFORM_ANSWERABILITY_PROMPT
+            self.ANSWERABILITY_PROMPT = KO_PRECISE_ANSWERABILITY_PROMPT if task == 'precise' else KO_LONGFORM_ANSWERABILITY_PROMPT
+        elif language == 'en':
+            self.Q_GENERATION_PROMPT = PRECISE_Q_GENERATION_PROMPT if task == 'precise' else LONGFORM_Q_GENERATION_PROMPT
+            self.ANSWERABILITY_PROMPT = PRECISE_ANSWERABILITY_PROMPT if task == 'precise' else LONGFORM_ANSWERABILITY_PROMPT
+        else:
+            raise NotImplementedError
 
         self.encoding = AutoTokenizer.from_pretrained(q_generator_path, trust_remote_code=True)
 

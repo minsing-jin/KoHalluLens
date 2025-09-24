@@ -57,6 +57,9 @@ pip install -r requirements.txt
 ### 🛢️ Getting ready with data 
 We provide script to download all data needed for all three tasks. This code will download all the data that you need for HalluLens. All data will be downloded under the ``/data`` folder. 
 
+#### ⚠️Notice
+Wikipedia dump is large (~16GB), so please make sure you have enough space. And it may not be able to download from this codes..
+
 ```
 bash scripts/download_data.sh
 ```
