@@ -6,6 +6,7 @@
 import os
 import openai
 from together import Together
+from dotenv import load_dotenv
 
 '''
 NOTE: 
@@ -15,7 +16,7 @@ NOTE:
         - openai_generate: using openai models
 '''
 
-
+load_dotenv()
 ########################################################################################################
 def custom_api(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512):
     raise NotImplementedError()
