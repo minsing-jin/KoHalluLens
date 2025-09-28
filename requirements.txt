@@ -10,6 +10,7 @@ gdown
 # lm inference
 vllm
 openai
+together
 
 # longwiki
 segtok
