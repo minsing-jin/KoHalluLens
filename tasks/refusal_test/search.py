@@ -12,7 +12,9 @@ from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
 import os
 from retry import retry
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def batch_search(queries: List[str], max_workers=60, cache=None) -> List[Dict]:
     search_results = []
