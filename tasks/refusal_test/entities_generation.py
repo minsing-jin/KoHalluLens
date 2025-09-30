@@ -76,7 +76,6 @@ class NonsenseMixedGeneration:
             generator = self.generators[type_]
             nonsense_names = generator.makeup_names()
             prompt_objs += self.make_prompt_objs(nonsense_names, type_)
-        print(prompt_objs)
         return prompt_objs
 
     def make_prompt_objs(self, names: list[str], type_: str):
@@ -97,7 +96,6 @@ class NonsenseMixedGeneration:
 
         df = pd.DataFrame(prompt_objs)
         df.to_csv(prompt_path, index=False)
-        print(df)
 
 
 # ============= ANIMAL /PLANT / BACTERIA =============
