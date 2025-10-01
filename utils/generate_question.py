@@ -380,7 +380,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_path", type=str, default="doc_anah.jsonl")
     parser.add_argument("--output_path", type=str, default="qa.jsonl")
-    parser.add_argument("--language", type=str, default="en")
+    parser.add_argument("--language", type=str, default="kor")
     parser.add_argument('--from_scratch', action='store_true')
     parser.add_argument("--max_doc_num", type=int, default=-1)
     parser.add_argument("--min_len", type=int, default=200)

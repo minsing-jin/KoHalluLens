@@ -425,7 +425,7 @@ Supported: 주장의 모든 내용이 참조 기사에 의해 뒷받침되고, �
 
 Unsupported: 주장이 참조 기사에 의해 뒷받침되지 않을 경우, 'Unsupported'으로 표시합니다.
 
-결과는 json 형식으로 반환해 주세요: {"is_supported":true|false}
+결과는 json 형식으로 반환해 주세요: {{"is_supported":true|false}}
 
 당신의 과제:
 참조 기사:
