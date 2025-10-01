@@ -5,7 +5,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-# TODO: This prompt is not consistent with the eval code. Need to fix it.
+# TODO: Original prompt is not consistent with the eval code. I fixed it.
 KO_IS_HALLUCINATION_RESPONSE = """당신에게 질문, 모델이 생성한 응답, 그리고 해당 질문에 대한 정답이 주어집니다.\
 당신의 과제는 LLM이 생성한 응답이 주어진 정답과 일치하는지 판단하는 것입니다.\
 만약 응답이 검증할 수 없는 내용이라면 "UNVERIFIABLE"이라고 답하세요.\
