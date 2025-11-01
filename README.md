@@ -79,8 +79,20 @@ cd HalluLens
 
 conda create --name hallulens python==3.12 #3.8.17
 conda activate hallulens
+```
+
+
+**[Requriements.txt로 설치시]**
+```
 pip install -r requirements.txt
 ```
+
+**[uv 설치시]**
+```
+pip install uv
+uv sync
+```
+
 
 ### 🛢️ Getting ready with data 
 We provide script to download all data needed for all three tasks. This code will download all the data that you need for HalluLens. All data will be downloded under the ``/data`` folder. 
@@ -99,6 +111,7 @@ It include as follow:
 - Processed Wikipedia dump (from [FactScore](https://arxiv.org/abs/2305.14251))
 - [ITIS taxonomy](https://www.itis.gov/)
 - [250k Medicines Usage, Side Effects and Substitutes](https://www.kaggle.com/datasets/shudhanshusingh/250k-medicines-usage-side-effects-and-substitutes)
+
 
 ### Getting ready with LLM inference.
 ##### [Together ai setup]
