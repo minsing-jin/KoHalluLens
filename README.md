@@ -37,7 +37,7 @@ Nicola Cancedda, Pascale Fung*
 ## 😵‍💫 LLM Hallucination 유형
 
 <div align="center">
-  <img src="assets/hallucination_taxonomy.png" style="width: 50%; margin: 0 auto; padding-top: 10px; padding-bottom: 10px; display: block;" />
+  <img src="resources/assets/hallucination_taxonomy.png" style="width: 50%; margin: 0 auto; padding-top: 10px; padding-bottom: 10px; display: block;" />
 
 **LLM Hallucination Taxonomy**
 </div>
@@ -64,7 +64,7 @@ Nicola Cancedda, Pascale Fung*
    MixedEntities (ii) GeneratedEntities
 
 <div align="center">
-  <img src="assets/main_results.png" style="width: 80%; margin: 0 auto; padding-top: 20px; padding-bottom: 20px; display: block;" />
+  <img src="resources/assets/main_results.png" style="width: 80%; margin: 0 auto; padding-top: 20px; padding-bottom: 20px; display: block;" />
 
 **Table 1:** Extrinsic hallucination evaluation results on three HalluLens tasks – PreciseWikiQA, LongWiki, and
 NonExistentEntities – in percentage (average of three trials of evaluation). Hallu refers to Hallucinated when not
