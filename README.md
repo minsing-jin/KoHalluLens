@@ -29,7 +29,7 @@ Nicola Cancedda, Pascale Fung*
 * [⚠️ Notice](#0️⃣-api-setting)
     * [0️⃣ API setting](#0️⃣-api-setting)
     * [1️⃣ 데이터 준비 (Getting ready with data)](#1️⃣-데이터-준비-getting-ready-with-data)
-        * [📂 한국어 데이터 다운로드](#📂-한국어-데이터-다운로드)
+        * [📂 한국어 데이터 다운로드 - ⭐️꼭 참고!!](#📂-한국어-데이터-다운로드)
         * [🌍 English Data Download](#🌍-english-data-download)
     * [2️⃣ Customization & Configuration](#2️⃣-customization--configuration)
     * [3️⃣ Troubleshooting](#3️⃣-troubleshooting)
@@ -114,7 +114,7 @@ for HalluLens. All data will be downloded under the ``/data`` folder.
 
 Wikipedia dump is large (~16GB), so please make sure you have enough space. And it may not be able to download from this
 codes. <br />
-**참고**: en-wiki-20230401.db 파일은 직접 다운로드 후 지정 경로에 넣어주셔야 합니다. (상세 내용은 아래 ['한국어 데이터 다운로드'](#notice) 참고)
+**참고**: en-wiki-20230401.db 파일은 **[직접 다운로드](https://drive.google.com/uc?id=1mekls6OGOKLmt7gYtHs0WGf5oTamTNat)**  후 지정 경로에 넣어주셔야 합니다. (상세 내용은 아래 ['한국어 데이터 다운로드'](#notice) 참고)
 
 ```
 bash scripts/download_data.sh
