@@ -1,7 +1,7 @@
 # KoHalluLens: LLM Hallucination Evaluation Benchmark in Korean
 
 [HalluLens: LLM Hallucination Benchmark](https://arxiv.org/abs/2504.17550)를 한국어 adaptation을 하여 모델의 Hallucination을 평가하는
-기능을 추가합니다.
+기능을 추가했습니다.
 
 ### 📌 Original Project Links
 
