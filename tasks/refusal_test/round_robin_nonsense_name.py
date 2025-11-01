@@ -11,6 +11,7 @@ import json
 import re
 import random
 import math
+import time
 import pandas as pd
 from tqdm import tqdm
 from collections import defaultdict
@@ -95,6 +96,12 @@ class NonsenseNameGeneration:
         self.root_path = root_path
         self.inference_method = method
 
+        # Adjust models because TogetherAI doesn't support Mistral-Nemo-Instruct-2407
+        if self.inference_method == 'together':
+            MODELS[MODELS.index('Mistral-Nemo-Instruct-2407')] = "Mistral-Small-24B-Instruct-2501"
+            FULL_NAME_MODELS[FULL_NAME_MODELS.index('mistralai/Mistral-Nemo-Instruct-2407')] = "mistralai/Mistral-Small-24B-Instruct-2501"
+
+        # Prompt templates according to language
         if language == 'kor':
             import tasks.refusal_test.ko_prompt as prompt_templates
         elif language == 'eng':
@@ -216,7 +223,10 @@ class NonsenseNameGeneration:
                         query += f" in {place}"
                     queries.append(query)
 
-                all_search_results = batch_search(queries, max_workers=16)
+                all_search_results = batch_search(queries,
+                                                  max_workers=16) # to avoid rate limit, set max_workers=1 temporarily
+                time.sleep(0.5) # to avoid rate limit
+
                 assert len(all_search_results) == len(names)
                 for name, search_results in zip(names, all_search_results):
                     exist = False
