@@ -16,7 +16,7 @@ def run_exp(
     all_prompts,
     generations_file_path=None,
     base_path="output",
-    inference_method="vllm",
+    inference_method="together",
     max_workers=64,
     max_tokens=512,
     return_gen = False
