@@ -11,7 +11,7 @@ This code **dynamically** generates evaluation data to test textual hallucinatio
  LLM Hallucination is defined "as a model behavior where its output is found to be inconsistent with either *its training corpus* or the *input context*." Whereas the oracle for factuality can be difficult to define and even controversial at times, an oracle for hallucination can be defined internally with respect to the model.
 
 <div align="center">
-  <img src="../assets/hallucination_taxonomy.png" style="width: 50%; margin: 0 auto; padding-top: 10px; padding-bottom: 10px; display: block;" />
+  <img src="assets/hallucination_taxonomy.png" style="width: 50%; margin: 0 auto; padding-top: 10px; padding-bottom: 10px; display: block;" />
 
   **LLM Hallucination Taxonomy**
 </div>
@@ -37,7 +37,7 @@ inference-time.
 4. **NonExistentRefusal**: to evaluate the model’s likelihood of generating hallucinated information *when prompted with knowledge beyond its training data* such as non-existent instances that sound natural. We create nonexistent entity names in various domains such as animal, plant, business, brand that sound natural. It consists two sub-tasks: (i) MixedEntities (ii) GeneratedEntities
 
 <div align="center">
-  <img src="../assets/main_results.png" style="width: 80%; margin: 0 auto; padding-top: 20px; padding-bottom: 20px; display: block;" />
+  <img src="assets/main_results.png" style="width: 80%; margin: 0 auto; padding-top: 20px; padding-bottom: 20px; display: block;" />
 
   **Table 1:** Extrinsic hallucination evaluation results on three HalluLens tasks – PreciseWikiQA, LongWiki, and
 NonExistentEntities – in percentage (average of three trials of evaluation). Hallu refers to Hallucinated when not refused, a ratio of answers include incorrect answers when it did not refuse. Correct refers to total correct answer rate, where refusal is considered to be incorrect. False Accept. refers to false acceptance rate, likelihood of model fails to prevent from hallucination on nonexistent entities.
