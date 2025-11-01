@@ -18,7 +18,8 @@ def remove_file(file_path):
 
 
 class NonsenseNameInference:
-    def __init__(self, output_base_dir, generate_model, prompt_path, seed, method='vllm'):
+    """method = together, openai, vllm, custom"""
+    def __init__(self, output_base_dir, generate_model, prompt_path, seed, method='together'):
         self.output_base_dir = output_base_dir
         self.generate_model = generate_model
         self.inference_method = method
@@ -34,8 +35,11 @@ class NonsenseNameInference:
         # prompt_path = f"{self.root_path}/save/{self.seed}_{self.BUSINESS_N}_{self.EVENT_N}_{self.PRODUCT_N}_all_not_exist.csv"
         all_prompts = pd.read_csv(self.prompt_path)
 
-        # TODO: This assert is to check if generated prompts are Korean.
-        assert all(any(re.search('[가-힣]', str(value)) for value in row) for _, row in all_prompts.iterrows()), "This prompt file does not seem to be Korean."
+        # This assertion is to check if generated prompts are Korean.
+        assert any(re.search('[가-힣]', str(value)) for _, row in all_prompts.iterrows() for value in row), (
+            "This prompt file does not seem to be Korean.\n"
+            f"{all_prompts} should contain Korean prompts."
+        )
 
         exp.run_exp(task=TASKNAME, 
                     model_path=generate_model, 
@@ -55,6 +59,7 @@ class NonsenseNameInference:
 class NonsenseNameEval:
     def __init__(self, output_base_dir, model_path, prompt_path, language='kor'):
         self.prompt_path = prompt_path
+        self.language = language
         self.TASKNAME = prompt_path.split('/')[-1].replace('_all_not_exist.csv', '') #  f"{seed}_{BUSINESS_N}_{EVENT_N}_{PRODUCT_N}"
         print('EVAL TASKNAME', self.TASKNAME)
         self.model_name = model_path.split("/")[-1]
@@ -64,9 +69,9 @@ class NonsenseNameEval:
         self.eval_raw_path = f'{self.task_output_dir}/raw_eval_res.jsonl'
         self.evaluator = "meta-llama/Llama-3.1-70B-Instruct"
 
-        if language == 'kor':
+        if self.language == 'kor':
             import tasks.refusal_test.ko_prompt as prompt_templates
-        elif language == 'eng':
+        elif self.language == 'eng':
             import tasks.refusal_test.prompt as prompt_templates
         else:
             raise ValueError("language should be 'kor' or 'eng'")
