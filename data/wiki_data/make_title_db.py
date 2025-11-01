@@ -56,8 +56,6 @@ if __name__ == "__main__":
     cursor_.execute("SELECT * FROM titles")
     i = 0
     for row in cursor_.fetchall():
-        print("데이터 셀렉팅!!!")
-        print(row)
         i +=1
         if i > 10:
             break
