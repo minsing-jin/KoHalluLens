@@ -7,6 +7,11 @@ import os
 import openai
 from together import Together
 from dotenv import load_dotenv
+import time
+from functools import wraps
+
+from ratelimit import limits, sleep_and_retry
+import backoff
 
 '''
 NOTE: 
@@ -18,10 +23,44 @@ NOTE:
 
 load_dotenv()
 ########################################################################################################
+# This function is for rate limiting the API calls. Adjust the calls_per_second as needed.
+def rate_limit(calls_per_second=10):
+    min_interval = 1.0 / calls_per_second
+    last_called = [0.0]
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elapsed = time.time() - last_called[0]
+            left_to_wait = min_interval - elapsed
+            if left_to_wait > 0:
+                time.sleep(left_to_wait)
+
+            ret = func(*args, **kwargs)
+            last_called[0] = time.time()
+            return ret
+
+        return wrapper
+
+    return decorator
+
+
 def custom_api(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512):
     raise NotImplementedError()
 
+CALLS = 9
+RATE_LIMIT = 1
 
+@backoff.on_exception(
+    backoff.expo,
+    Exception,
+    max_tries=5,
+    max_time=30,
+    giveup=lambda e: "429" not in str(e)
+)
+@sleep_and_retry
+@limits(calls=CALLS, period=RATE_LIMIT)
+@rate_limit(calls_per_second=9)
 def generate(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512, port=None, i=0):
     # return custom_api(prompt, model, temperature, top_p, max_tokens, port)
     # return call_vllm_api(prompt, model, temperature, top_p, max_tokens, port, i)
@@ -54,7 +93,7 @@ def call_together_api(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512)
         )
         return response.choices[0].message.content
     except Exception as e:
-        print(f"TogetherAI API 호출 실패: {e}")
+        print(f"TogetherAI API call has failed: {e}")
         return ""
 
 
@@ -96,7 +135,7 @@ def call_vllm_api(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512, por
 
 def openai_generate(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512):
     client = openai.OpenAI(
-        api_key=os.environ["OPENAI_KEY"],
+        api_key=os.environ["OPENAI_API_KEY"],
     )
     chat_completion = client.chat.completions.create(
         model=model,
