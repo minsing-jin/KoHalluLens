@@ -19,6 +19,8 @@ MODELS=(
     # "claude-3-sonnet"
     # "claude-3-haiku"
     # "gpt-4o"
+    # "google/gemma-3n-E4B-it"
+    # "marin-community/marin-8b-instruct"
 )
 
 MODE=dynamic
@@ -31,6 +33,6 @@ do
         --model $MODEL\
         --wiki_src goodwiki\
         --mode $MODE \
-        --inference_method vllm \
-        --N 1
+        --inference_method together \
+        --N 5000
 done

@@ -265,7 +265,8 @@ class FactHalu:
         print("***** [2-2] Parsing extracted claims")
         all_claims = []
         deduplicate = defaultdict(set)
-        assert len(all_claim_extractions) == len(all_sentences)
+        assert len(all_claim_extractions) == len(all_sentences), ("Mismatch in extracted claims and sentences\n"
+                                                                  "{} vs {}".format(len(all_claim_extractions), len(all_sentences)))
 
         for claim_extraction, sentence in zip(all_claim_extractions, all_sentences):
             if (not claim_extraction) or \

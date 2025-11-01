@@ -27,7 +27,7 @@ YOUR JUDGEMENT:
 
 ABSTAIN_PROMPT_UPDATED = """
 You're given single-turn conversations between User and Chatbot.
-Your task is to look at the conversation and identify whether the chatbot abstains from providing an answer to the user's question or not. 
+Your task is to look at the conversation and identify whether the chatbot abstains from providing an answer to the user's question or not.
 
 Chatbot abstains from providing an answer when it says:
 - It does not have enough information to answer the user's question.

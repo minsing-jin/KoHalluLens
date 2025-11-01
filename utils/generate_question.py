@@ -147,7 +147,7 @@ class WikiQA:
 
         # prompt
         if language == 'kor':
-            self.Q_GENERATION_PROMPT = KO_LONGFORM_Q_GENERATION_PROMPT if task == 'precise' else KO_LONGFORM_ANSWERABILITY_PROMPT
+            self.Q_GENERATION_PROMPT = KO_PRECISE_Q_GENERATION_PROMPT if task == 'precise' else KO_LONGFORM_Q_GENERATION_PROMPT
             self.ANSWERABILITY_PROMPT = KO_PRECISE_ANSWERABILITY_PROMPT if task == 'precise' else KO_LONGFORM_ANSWERABILITY_PROMPT
         elif language == 'en':
             self.Q_GENERATION_PROMPT = PRECISE_Q_GENERATION_PROMPT if task == 'precise' else LONGFORM_Q_GENERATION_PROMPT
@@ -206,10 +206,14 @@ class WikiQA:
         if reply.strip().lower() == "unanswerable"\
                 or "unanswerable" in reply\
                     or reply.lower().startswith("unfortunately"):
+            # print(f"DEBUG: Filtered - unanswerable: {reply[:50]}...")
+            # print(f"DEBUG: Filtered - unanswerable: {len(reply)}...")
             return -1
         if self.task == 'longform':
             # this is to ensure the question is "longform" answer triggering
             if len(sentence_tokenize(reply, 'en', False, keep_colon=False)) < 4:
+                # print(f"DEBUG: Filtered - only {len(sentence_tokenize(reply, 'en', False, keep_colon=False))} sentences (need 4+)")
+                # print(f"  Answer: {reply[:]}...")
                 return -1
         elif self.task == 'precise':
             if len(reply.split()) > 10:
@@ -260,7 +264,7 @@ class WikiQA:
             all_data.append(obj)
 
         print("Generating questions...")
-        results = thread_map(lambda p: lm.call_vllm_api(p, self.q_generator, temperature=0.7, top_p=0.9),
+        results = thread_map(lambda p: lm.call_together_api(p, self.q_generator, temperature=0.7, top_p=0.9),
                                 Q_MAKING_PROMPTS,
                                 max_workers=50,
                                 desc=f"using {self.q_generator}")
@@ -342,6 +346,7 @@ def longform_QA_generation_run_batch(
         low_level=5,
         high_level=10
     ):
+    """You need to use a powerful model for longform QA generation to model follow prompt, e.g., Llama-3.1-70B-Instruct"""
     qa = WikiQA(q_generator, task='longform')
 
     print("START TO GENERATE QUESTION N={}...".format(N))
@@ -367,10 +372,10 @@ def longform_QA_generation_run_batch(
         level_wiki = level_wiki.sample(frac=1) 
         wiki_data = level_wiki.to_dict(orient='records')
         random.shuffle(wiki_data)
-        wiki_data = wiki_data[:per_level_count+5] #todo 100
+        wiki_data = wiki_data[:per_level_count*5] #todo 100
 
         bin_QAs = qa.per_bin_generation_batch(wiki_data, output_path, per_level_count)
-        assert len(bin_QAs) == per_level_count
+        assert len(bin_QAs) == per_level_count, f"{len(bin_QAs)} != {per_level_count}"
         QAs_all.extend(bin_QAs)
 
     return QAs_all
@@ -380,7 +385,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_path", type=str, default="doc_anah.jsonl")
     parser.add_argument("--output_path", type=str, default="qa.jsonl")
-    parser.add_argument("--language", type=str, default="en")
+    parser.add_argument("--language", type=str, default="kor")
     parser.add_argument('--from_scratch', action='store_true')
     parser.add_argument("--max_doc_num", type=int, default=-1)
     parser.add_argument("--min_len", type=int, default=200)

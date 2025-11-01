@@ -25,8 +25,21 @@ DESCRIBE_PROMPTS = ['What can you tell me about the {type} {name}?',
                     "I'd like to learn more about the {type} {name}.",
                     "Could you provide an overview of the {type} {name}?"]
 
+KO_DESCRIBE_PROMPTS = ['{type} {name}에 대해 알려주시겠어요?',
+                       '{type} {name}에 대한 정보를 찾고 있어요.',
+                       '{type} {name}에 대해 설명해주세요.',
+                       '{type} {name}에 대해 더 알고 싶어요.',
+                       '{type} {name}에 대해 자세히 알려주시겠어요?',
+                       '{type} {name}에 대해 아는 것을 알려주세요.',
+                       '{type} {name}에 대한 세부 정보를 공유해주실 수 있나요?',
+                       '{type} {name}이 궁금해요. 무엇을 알려줄 수 있나요?',
+                       '{type} {name}에 대해 더 배우고 싶어요.',
+                       '{type} {name}에 대한 개요를 설명해주시겠어요?'
+                       ]
+
+
 class NonsenseMixedGeneration:
-    def __init__(self, seed: int, N: int = 2000, EXP: str = "all"):
+    def __init__(self, seed: int, N: int = 2000, EXP: str = "all", language='kor'):
         self.seed = seed
         self.N = N
         self.EXP = EXP
@@ -38,7 +51,14 @@ class NonsenseMixedGeneration:
             'plant': NonsenseTaxonomyGeneration(self.seed, self.N, kingdom_type='plant'),
             'bacteria': NonsenseTaxonomyGeneration(self.seed, self.N, kingdom_type='bacteria')
         }
-    
+
+        if language == 'kor':
+            self.describe_prompt = KO_DESCRIBE_PROMPTS
+        elif language == 'en':
+            self.describe_prompt = DESCRIBE_PROMPTS
+        else:
+            raise ValueError(f"Unsupported language: {language}")
+
     def generate_prompts(self):
         types = {
             "nonsense_all": ['medicine', 'animal', 'plant', 'bacteria'],
@@ -56,23 +76,21 @@ class NonsenseMixedGeneration:
             generator = self.generators[type_]
             nonsense_names = generator.makeup_names()
             prompt_objs += self.make_prompt_objs(nonsense_names, type_)
-
         return prompt_objs
-
 
     def make_prompt_objs(self, names: list[str], type_: str):
         prompt_objs = [
-            {   "prompt": random.choice(DESCRIBE_PROMPTS).format(type=type_, name=name),
-                "name": name,
-                "type": type_   
-            } for name in names
+            {"prompt": random.choice(self.describe_prompt).format(type=type_, name=name),
+             "name": name,
+             "type": type_
+             } for name in names
         ]
         return prompt_objs
-        
+
     def save_prompt_csv(self,
                         prompt_objs: list[dict],
                         prompt_path: str):
-        
+
         prompt_dir = '/'.join(prompt_path.split('/')[:-1])
         os.makedirs(prompt_dir, exist_ok=True)
 
@@ -96,8 +114,9 @@ class Node:
     def __repr__(self):
         return f"{self.name}"
 
+
 class NonsenseTaxonomyGeneration:
-    def __init__(self,seed, N, kingdom_type):
+    def __init__(self, seed, N, kingdom_type):
         # self.SPECIES, self.ALL_SPECIES_NAME = self.make_graph()
         self.seed = seed
         self.N = N
@@ -112,7 +131,6 @@ class NonsenseTaxonomyGeneration:
             self.kingdom = 'Bacteria'
         else:
             raise ValueError(f'Invalid kingdom type: {kingdom_type}')
-        
 
     def make_graph(self):
         graph = Node("root")
@@ -132,7 +150,7 @@ class NonsenseTaxonomyGeneration:
                     parent = node
 
         all_species_names = set()
-        with Path(f"{self.DATAPATH}/longnames").open(encoding = "ISO-8859-1") as f:
+        with Path(f"{self.DATAPATH}/longnames").open(encoding="ISO-8859-1") as f:
             try:
                 for line in tqdm(f):
                     code, name = line.split("|")
@@ -145,7 +163,7 @@ class NonsenseTaxonomyGeneration:
                 print(line)
                 raise
 
-        species = [v for v in node_lookup.values() if len(v.children)==0]
+        species = [v for v in node_lookup.values() if len(v.children) == 0]
         return species, all_species_names
 
     def get_kingdom(self, node):
@@ -155,17 +173,18 @@ class NonsenseTaxonomyGeneration:
 
     def makeup_names(self):
         self.SPECIES, self.ALL_SPECIES_NAME = self.make_graph()
-        kingdom = self.kingdom 
+        kingdom = self.kingdom
         random.seed(self.seed)
         species_sample = set()
-        while len(species_sample)<self.N:
+        while len(species_sample) < self.N:
             while True:
                 sample = random.choice(self.SPECIES)
                 # print(get_kingdom(sample).name)
-                if len(sample.name.split(" "))==2 and self.get_kingdom(sample).name==kingdom:
+                if len(sample.name.split(" ")) == 2 and self.get_kingdom(sample).name == kingdom:
                     break
-            other_genuses = [uncle for uncle in sample.parent.parent.children if uncle!=sample.parent and len(uncle.children)>0]
-            if len(other_genuses)==0:
+            other_genuses = [uncle for uncle in sample.parent.parent.children if
+                             uncle != sample.parent and len(uncle.children) > 0]
+            if len(other_genuses) == 0:
                 continue
             other_genus = random.choice(other_genuses)
             made_up_name = other_genus.name + " " + sample.name.split(" ")[1]
@@ -177,6 +196,7 @@ class NonsenseTaxonomyGeneration:
                 species_sample.add(made_up_name)
         return species_sample
 
+
 # ======= MEDICINE ===========
 class NonsenseMedicineGeneration:
     def __init__(self, seed, N):
@@ -187,7 +207,7 @@ class NonsenseMedicineGeneration:
         print('will generate N:', self.N)
         self.get_orinal_names()
         self.get_word_pool()
-    
+
     def get_orinal_names(self):
         df = pd.read_csv(self.DATAPATH)
         name = df['name']
@@ -209,7 +229,7 @@ class NonsenseMedicineGeneration:
             name = re.sub(r'\(.*?\)', '', name)
             if "," in name or '&' in name:
                 continue
-            
+
             words = name.split()
             words2 = []
             for w in words:
@@ -243,7 +263,6 @@ class NonsenseMedicineGeneration:
             third_word_pool[length] = list(third_word_pool[length])
         self.first_word_pool, self.second_word_pool, self.third_word_pool = first_word_pool, second_word_pool, third_word_pool
 
-    
     def generate_similar_name(self, original_name):
         parts = original_name.split()
         length = len(parts)
@@ -257,7 +276,6 @@ class NonsenseMedicineGeneration:
             new_parts.append(random.choice(self.third_word_pool[length]))
         return ' '.join(new_parts)
 
-    
     def makeup_names(self):
         existing_names = self.existing_names
         random.seed(self.seed)
@@ -269,7 +287,6 @@ class NonsenseMedicineGeneration:
                 if new_name and new_name not in existing_names and new_name not in new_names:
                     new_names.add(new_name)
                     pbar.update(1)
-                    
+
         new_names = list(new_names)
         return new_names
-     

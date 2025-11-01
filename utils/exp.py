@@ -16,7 +16,7 @@ def run_exp(
     all_prompts,
     generations_file_path=None,
     base_path="output",
-    inference_method="vllm",
+    inference_method="together",
     max_workers=64,
     max_tokens=512,
     return_gen = False
@@ -55,6 +55,13 @@ def run_exp(
             prompts,
             max_workers=max_workers,
             desc="Predict on custom API",
+        )
+    elif inference_method == "together":
+        all_prompts["generation"] = thread_map(
+            lambda p: lm.call_together_api(p, model=model_path, temperature=0.0, top_p=1.0, max_tokens=max_tokens),
+            prompts,
+            max_workers=max_workers,
+            desc="Predict on together API",
         )
     else:
         raise NotImplementedError(f"No method {inference_method}")

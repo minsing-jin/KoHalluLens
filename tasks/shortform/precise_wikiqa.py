@@ -166,7 +166,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--model', type=str, default='meta-llama/Meta-Llama-3.1-70B-Instruct',
                         help='model to use for generation')
-    parser.add_argument('--inference_method', type=str, default='vllm', help='check and customize util/lm.py')
+    parser.add_argument('--inference_method', type=str, default='together', help='check and customize util/lm.py')
     parser.add_argument('--max_inference_tokens', type=int, default=256)
     parser.add_argument('--inf_batch_size', type=int, default=64)
 
@@ -183,13 +183,13 @@ if __name__ == '__main__':
     print(f"Running {TASKNAME} with model {model_name}")
 
     QAs_df = None
-    if args.do_generate_prompt:
-        # 1. Generate QA pairs
-        QA_OUTPUT_PATH = f'data/precise_qa/save/qa_{args.wiki_src}_{model_name}_{args.mode}.jsonl' \
-            if args.qa_output_path == "" \
-            else args.qa_output_path
-        print(QA_OUTPUT_PATH)
 
+    QA_OUTPUT_PATH = f'data/precise_qa/save/qa_{args.wiki_src}_{model_name}_{args.mode}.jsonl' \
+        if args.qa_output_path == "" \
+        else args.qa_output_path
+    print(QA_OUTPUT_PATH)
+
+    if args.do_generate_prompt:
         if os.path.exists(QA_OUTPUT_PATH):
             QAs = [line for line in jsonlines.open(QA_OUTPUT_PATH, 'r')]
             print("DATA EXISTS!! Reading from existing file ", len(QAs))

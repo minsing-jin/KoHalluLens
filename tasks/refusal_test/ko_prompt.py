@@ -225,6 +225,6 @@ ABSTAIN_PROMPT_PLACE_NONSENSE = """주어진 프롬프트에는 {PLACE}에 있�
 답변: {{"does_believe": true}}
 
 생성된 내용에 따르면, AI는 '{name}'이(가) {PLACE}에 존재한다고 믿습니까?
-생성된 내용: {{generation}}
+생성된 내용: {generation}
 답변:
 """

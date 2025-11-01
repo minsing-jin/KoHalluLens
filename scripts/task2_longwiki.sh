@@ -20,6 +20,7 @@ MODELS=(
     # "claude-3-sonnet"
     # "claude-3-haiku"
     # "gpt-4o"
+#    "google/gemma-3n-E4B-it"
 )
 
 EXP_MODE=longwiki
@@ -31,8 +32,8 @@ do
         --do_inference \
         --do_eval \
         --model $MODEL\
-        --inference_method vllm \
-        --N 5 \
-        --db_path "/private/home/yejinbang/facthalu/data/wiki_data/.cache/enwiki-20230401.db" \
+        --inference_method together \
+        --N 250 \
+        --db_path "input your enwiki-20230401.db path at here" \
         --q_generator meta-llama/Llama-3.1-8B-Instruct    #TODO!!
 done

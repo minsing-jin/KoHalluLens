@@ -5,15 +5,16 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-# Set the environment variable for the API key
-export BRAVE_API_KEY="your brave api key" 
-export OPENAI_KEY="your openai key"
+# Set the environment variable for the API key (You can set api keys at .env)
+#export BRAVE_API_KEY="your brave api key"
+#export OPENAI_API_KEY="your openai key"
 
 MODELS=(
     # "meta-llama/Llama-3.1-8B-Instruct"
     # "meta-llama/Llama-3.3-70B-Instruct"
     # "meta-llama/Llama-3.1-70B-Instruct"
-    # "meta-llama/Llama-3.1-405B-Instruct-FP8"    
+    # "meta-llama/Llama-3.1-405B-Instruct-FP8"
+    # "google/gemma-3n-E4B-it"
 )
 for SEED in 0
 do
@@ -25,6 +26,7 @@ do
         --do_eval \
         --output_base_dir "output/refusal_test" \
         --generate_model $MODELS \
+        --inference_method together \
         --BUSINESS_N 500 \
         --EVENT_N 400 \
         --PRODUCT_N 100 \
