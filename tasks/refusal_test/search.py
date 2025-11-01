@@ -47,6 +47,7 @@ class SearchException(Exception):
 @sleep_and_retry
 @limits(calls=60, period=1)
 def search_brave(query_string: str) -> Dict:
+    # time.sleep(0.5)     # This delay is to avoid request speed limit and request limit of brave search api free plan
     headers = {
         "Accept": "application/json",
         "X-Subscription-Token": os.environ["BRAVE_API_KEY"],
