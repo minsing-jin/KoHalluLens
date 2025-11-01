@@ -5,6 +5,7 @@
 
 import os
 import openai
+import anthropic
 from together import Together
 from dotenv import load_dotenv
 import time
@@ -22,6 +23,8 @@ NOTE:
 '''
 
 load_dotenv()
+
+
 ########################################################################################################
 # This function is for rate limiting the API calls. Adjust the calls_per_second as needed.
 def rate_limit(calls_per_second=10):
@@ -48,8 +51,10 @@ def rate_limit(calls_per_second=10):
 def custom_api(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512):
     raise NotImplementedError()
 
+
 CALLS = 9
 RATE_LIMIT = 1
+
 
 @backoff.on_exception(
     backoff.expo,
@@ -65,6 +70,7 @@ def generate(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512, port=Non
     # return custom_api(prompt, model, temperature, top_p, max_tokens, port)
     # return call_vllm_api(prompt, model, temperature, top_p, max_tokens, port, i)
     return call_together_api(prompt, model, temperature, top_p, max_tokens)
+
 
 together_client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
 
@@ -146,3 +152,34 @@ def openai_generate(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512):
     )
 
     return chat_completion.choices[0].message.content
+
+
+def grok_generate(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512):
+    client = openai.OpenAI(
+        api_key=os.environ["XAI_API_KEY"],
+        base_url="https://api.x.ai/v1"
+    )
+    chat_completion = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=max_tokens,
+        temperature=temperature,
+        top_p=top_p
+    )
+
+    return chat_completion.choices[0].message.content
+
+
+def claude_generate(prompt, model, temperature=0.0, top_p=1.0, max_tokens=512):
+    client = anthropic.Anthropic(
+        api_key=os.environ["ANTHROPIC_API_KEY"],
+    )
+    message = client.messages.create(
+        model=model,
+        max_tokens=max_tokens,
+        temperature=temperature,
+        top_p=top_p,
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return message.content[0].text
