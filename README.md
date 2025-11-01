@@ -1,13 +1,23 @@
 # KoHalluLens: LLM Hallucination Evaluation Benchmark in Korean
 
-**[HalluLens: LLM Hallucination Benchmark](https://arxiv.org/abs/2504.17550)**를 한국어화하여 모델의 \*\*Hallucination(환각 현상)\*\*을 평가하는 기능을 추가합니다.
+**[HalluLens: LLM Hallucination Benchmark](https://arxiv.org/abs/2504.17550)**를 한국어 adaptation을 하여 모델의 \*\*Hallucination(환각 현상)\*\*을 평가하는 기능을 추가합니다.
 
 
 ### 📌 Original Project Links
-- [원본 HalluLens repo]("https://github.com/facebookresearch/HalluLens")
-- [![arXiv](https://img.shields.io/badge/arXiv-2504.17550-b31b1b.svg)](https://arxiv.org/pdf/2504.17550)
-- *Yejin Bang, Ziwei Ji, Alan Schelten, Anthony Hartshorn, Tara Fowler, Cheng Zhang, Nicola Cancedda, Pascale Fung*
 
+<p align="left">
+  <a href="https://github.com/facebookresearch/HalluLens">
+    <img src="https://img.shields.io/badge/GitHub-HalluLens-black?logo=github" alt="GitHub HalluLens"/>
+  </a>
+  &nbsp;
+  <a href="https://arxiv.org/pdf/2504.17550">
+    <img src="https://img.shields.io/badge/arXiv-2504.17550-b31b1b.svg" alt="arXiv Paper"/>
+  </a>
+</p>
+
+**Authors:**  
+*Yejin Bang, Ziwei Ji, Alan Schelten, Anthony Hartshorn, Tara Fowler, Cheng Zhang,  
+Nicola Cancedda, Pascale Fung*
 
 ## 📑 Table of Contents
 * [😵‍💫LLM Hallucination 유형](#-LLM-Hallucination-유형)
