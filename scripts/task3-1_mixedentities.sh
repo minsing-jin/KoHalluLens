@@ -26,7 +26,7 @@ do
             --do_inference \
             --do_eval \
             --tested_model $MODEL \
-            --N 10 \
+            --inference_method together \
             --seed $SEED
     done
 done
