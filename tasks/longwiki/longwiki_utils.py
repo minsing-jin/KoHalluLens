@@ -120,6 +120,7 @@ def model_eval_step(evaluator, prompts, max_token=512, batch_size=16, max_worker
 def jsonify_ans(raw_responses, eval_prompts, evaluator, key):
 
     def check_validity(gen):
+        gen = gen.replace(" ", "").lower()
         if '{{"{}":false}}'.format(key) in gen.lower():
             return '{{"{}":false}}'.format(key)
         elif '{{"{}":true}}'.format(key) in gen.lower():
@@ -143,7 +144,7 @@ def jsonify_ans(raw_responses, eval_prompts, evaluator, key):
                 error_count = 0
                 
                 while error:
-                    re_eval = lm.api_generate(p, evaluator)
+                    re_eval = lm.call_together_api(p, evaluator)
 
                     try: 
                         print("\n** RETRY:", re_eval)
