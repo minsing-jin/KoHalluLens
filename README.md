@@ -92,12 +92,6 @@ conda create --name hallulens python==3.12 #3.8.17
 conda activate hallulens
 ```
 
-**[Requriements.txt로 설치시]**
-
-```
-pip install -r requirements.txt
-```
-
 **[uv 설치시]**
 
 ```
