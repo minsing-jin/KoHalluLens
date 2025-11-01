@@ -63,7 +63,7 @@ if __name__ == '__main__':
     parser.add_argument('--do_extract_only', default=False, action='store_true')
 
     parser.add_argument('--model', type=str, default='meta-llama/Llama-3.1-405B-Instruct-FP8', help='model that is being "TESTED"')
-    parser.add_argument('--q_generator', type=str, default='meta-llama/Meta-Llama-3.1-70B-Instruct', help='model that is used for question generation')
+    parser.add_argument('--q_generator', type=str, default='meta-llama/Llama-3.1-70B-Instruct', help='model that is used for question generation')
 
     parser.add_argument('--claim_extractor', type=str, default='meta-llama/Llama-3.1-405B-Instruct-FP8', help='model that is used for claim extraction')
     parser.add_argument('--abstain_evaluator', type=str, default="meta-llama/Llama-3.1-70B-Instruct", help='model that is used for abstantion evaluation')
